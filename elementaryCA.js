@@ -68,13 +68,13 @@ generateButton.addEventListener('submit', (e) => {
   e.preventDefault()
   // Find each of the configuration values and assign a value from the input or use default
   const ruleElement = document.querySelector('#rule')
-  const RULE = Number(ruleElement.value) || Number(ruleElement.placeholder)
+  const RULE = ruleElement.value !== undefined ? Number(ruleElement.value) : Number(ruleElement.placeholder)
   const widthElement = document.querySelector('#width')
   const AUTOMATON_WIDTH = Math.floor(widthElement.value/2) || Number(widthElement.placeholder)
   const numIterationElement = document.querySelector('#num-iterations')
   const NUM_ITERATIONS = Number(numIterationElement.value) || Number(numIterationElement.placeholder)
   const genDelayElement = document.querySelector('#gen-delay')
-  const GEN_DELAY = Number(genDelayElement.value) || Number(genDelayElement.placeholder)
+  const GEN_DELAY = genDelayElement.value !== undefined ? Number(genDelayElement.value) : Number(genDelayElement.placeholder)
 
   // Initial configuration
   const padding = Array.from({length: AUTOMATON_WIDTH}, () => '0').join('')
