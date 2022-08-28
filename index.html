@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="index.css">
+  <!-- Custom fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+  <title>Dib's Elementary CA</title>
+</head>
+<body>
+  <h1>Elementary Cellular Automata</h1>
+  <p>This is a very simple implementation of Wolfram's Elementary Automata. Simply</p>
+
+  <form>
+    <div>
+      <label for="rule">Rule</label>
+      <input id="rule" type="number" placeholder="90">
+    </div>
+
+    <div>
+      <label for="width">Width </label>
+      <input id="width" type="number" placeholder="500">
+    </div>
+
+    <div>
+      <label for="num-iterations">Number of iterations</label>
+      <input id="num-iterations" type="number" placeholder="500">
+    </div>
+
+    <div>
+      <label for="gen-delay">Number of iterations</label>
+      <input id="gen-delay" type="number" placeholder="5">
+    </div>
+
+    <button>Generate!</button>
+  </form>
+
+  <div class="container">
+    <canvas id="canvas"></canvas>
+  </div>
+
+  <script src="elementaryCA.js"></script>
+</body>
+</html>

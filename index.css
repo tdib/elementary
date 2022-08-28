@@ -1,0 +1,23 @@
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  padding: 2em;
+}
+
+form {
+  background-color: red;
+  padding: 1em;
+}
+
+canvas {
+  /* background-color: grey; */
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.container {
+  height: 50em;
+  overflow: auto;
+}
