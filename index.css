@@ -4,20 +4,54 @@
 
 body {
   padding: 2em;
+  font-family: 'Poppins';
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  max-width: 80em;
+  align-self: center;
+  display: flex;
+  flex-direction: column;
 }
 
 form {
-  background-color: red;
+  margin-block: 1.5em;
   padding: 1em;
+  display: grid;
+  gap: 1em;
+  max-width: fit-content;
+  align-self: center;
+}
+
+form label  {
+  grid-column: 1;
+}
+
+form input {
+  grid-column: 2;
+  border-radius: .25em;
+}
+
+form button {
+  grid-column: span 2;
 }
 
 canvas {
-  /* background-color: grey; */
   width: 100%;
   box-sizing: border-box;
 }
 
-.container {
+.canvas-container {
   height: 50em;
   overflow: auto;
+  border-radius: .25em;
+  background-color: hsl(0, 0%, 90%);
+}
+
+@media (prefers-color-scheme: dark) {
+  .canvas-container {
+    background-color: hsl(0, 0%, 15%);
+  }
 }

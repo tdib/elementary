@@ -11,36 +11,36 @@
   <title>Dib's Elementary CA</title>
 </head>
 <body>
-  <h1>Elementary Cellular Automata</h1>
-  <p>This is a very simple implementation of Wolfram's Elementary Automata. Simply</p>
+  <main>
+    <h1>Elementary Cellular Automata</h1>
+    <p>This is a very simple implementation of Wolfram's Elementary Automata. Simply plug in the values you would like to experiment with, and either click generate, or press enter.</p>
+    <ul>
+      <li>Rule: Determines the neighbourhood update rules</li>
+      <li>Width: The number of cells that will be generated horizontally</li>
+      <li>Number of iterations: The number of iterations that will be stacked on one another (i.e. vertical height)</li>
+      <li>Generation delay: The buffer between the generation of each iteration - a value of 0 means instant generation</li>
+    </ul>
 
-  <form>
-    <div>
+    <form>
       <label for="rule">Rule</label>
-      <input id="rule" type="number" placeholder="90">
-    </div>
+      <input id="rule" type="number" min="0" max="255" placeholder="90" value="90">
 
-    <div>
       <label for="width">Width </label>
-      <input id="width" type="number" placeholder="500">
-    </div>
+      <input id="width" type="number" min="3" placeholder="250" value="250">
 
-    <div>
       <label for="num-iterations">Number of iterations</label>
-      <input id="num-iterations" type="number" placeholder="500">
+      <input id="num-iterations" type="number" min="0" placeholder="250" value="250">
+
+      <label for="gen-delay">Generation delay</label>
+      <input id="gen-delay" type="number" min="0" placeholder="5" value="5">
+
+      <button>Generate!</button>
+    </form>
+
+    <div class="canvas-container">
+      <canvas></canvas>
     </div>
-
-    <div>
-      <label for="gen-delay">Number of iterations</label>
-      <input id="gen-delay" type="number" placeholder="5">
-    </div>
-
-    <button>Generate!</button>
-  </form>
-
-  <div class="container">
-    <canvas id="canvas"></canvas>
-  </div>
+  </main>
 
   <script src="elementaryCA.js"></script>
 </body>
