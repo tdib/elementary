@@ -24,11 +24,6 @@ main {
   flex-direction: column;
 }
 
-.info {
-  -webkit-padding-after: 3em;
-          padding-block-end: 3em;
-}
-
 .ruleset-container {
   --max-rule-width: 9em;
   justify-content: center;
