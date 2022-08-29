@@ -13,13 +13,68 @@
 <body>
   <main>
     <h1>Elementary Cellular Automata</h1>
-    <p>This is a very simple implementation of Wolfram's Elementary Automata. Simply plug in the values you would like to experiment with, and either click generate, or press enter.</p>
+    <p>This is a simple implementation of Wolfram's Elementary Automata. Simply plug in the values you would like to experiment with, and either click generate, or press enter.</p>
     <ul>
       <li>Rule: Determines the neighbourhood update rules</li>
       <li>Width: The number of cells that will be generated horizontally</li>
       <li>Number of iterations: The number of iterations that will be stacked on one another (i.e. vertical height)</li>
       <li>Generation delay: The buffer between the generation of each iteration - a value of 0 means instant generation</li>
     </ul>
+    <p>
+      The grid cells below are a visual representation of the chosen rule. This rule may be updated by either clicking on the cells below the rows of three, or by simply typing it into the input field.
+      Refreshing the page will randomly set a new rule.
+    </p>
+
+    <div class="ruleset-container">
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+    </div>
 
     <form>
       <label for="rule">Rule</label>
@@ -43,5 +98,7 @@
   </main>
 
   <script src="elementaryCA.js"></script>
+  <script src="setRandomRule.js"></script>
+  <script src="ruleUpdate.js"></script>
 </body>
 </html>

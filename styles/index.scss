@@ -1,5 +1,13 @@
 :root {
   color-scheme: light dark;
+
+  --surface: hsl(0, 0%, 90%);
+  --active: hsl(0, 0%, 10%);
+
+  @media (prefers-color-scheme: dark) {
+    --surface: hsl(0, 0%, 15%);
+    --active: white;
+  }
 }
 
 body {
@@ -16,6 +24,45 @@ main {
   flex-direction: column;
 }
 
+.info {
+  padding-block-end: 3em;
+}
+
+.ruleset-container {
+  --max-rule-width: 9em;
+  justify-content: center;
+  width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, var(--max-rule-width));
+  gap: 1em;
+  row-gap: 2.5em;
+  padding-block: 3em;
+
+  .rule-container {
+    min-width: 7em;
+    max-width: 10em;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: .25em;
+
+    .rule-cell {
+      flex: 1;
+      aspect-ratio: 1/1;
+      background-color: var(--surface);
+      &.active {
+        background-color: var(--active);
+      }
+      &.input {
+        grid-column: 2;
+        &:hover {
+          cursor: pointer;
+        }
+      }
+    }
+  }
+}
+
 form {
   margin-block: 1.5em;
   padding: 1em;
@@ -23,35 +70,29 @@ form {
   gap: 1em;
   max-width: fit-content;
   align-self: center;
-}
 
-form label  {
-  grid-column: 1;
-}
+  label {
+    grid-column: 1;
+  }
 
-form input {
-  grid-column: 2;
-  border-radius: .25em;
-}
+  input {
+    grid-column: 2;
+    border-radius: .25em;
+  }
 
-form button {
-  grid-column: span 2;
-}
-
-canvas {
-  width: 100%;
-  box-sizing: border-box;
+  button {
+    grid-column: span 2;
+  }
 }
 
 .canvas-container {
   height: 50em;
   overflow: auto;
   border-radius: .25em;
-  background-color: hsl(0, 0%, 90%);
-}
+  background-color: var(--surface);
 
-@media (prefers-color-scheme: dark) {
-  .canvas-container {
-    background-color: hsl(0, 0%, 15%);
+  canvas {
+    width: 100%;
+    box-sizing: border-box;
   }
 }
