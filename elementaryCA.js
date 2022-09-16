@@ -1,10 +1,10 @@
-// Given a one-dimensional grid of cells (a single iteration), 
+// Given a one-dimensional grid of cells (a single iteration),
 // calculate the next based on the provided rule
-const getNextRow = (currRow, ruleBinary) => {
+const getNextRow = (currRow, ruleBinary, randomNoise) => {
   return currRow.map((cell, idx) => {
     // Find left values of left and right neighbours
-    const leftNeighbour = currRow[idx-1] || 0
-    const rightNeighbour = currRow[idx+1] || 0
+    const leftNeighbour = currRow[idx - 1] || 0
+    const rightNeighbour = currRow[idx + 1] || 0
     // console.log(leftNeighbour, cell, rightNeighbour);
 
     // Convert neighbours to binary bits and decimal
@@ -13,17 +13,27 @@ const getNextRow = (currRow, ruleBinary) => {
     // console.log(neighbourhoodRuleBits);
 
     // Determine the value of the cell in the next iteration based on the rule provided
-    const newCellValue = parseInt(ruleBinary[(ruleBinary.length-1)-neighbourhoodRule])
-    return newCellValue
+    const newCellValue = parseInt(
+      ruleBinary[ruleBinary.length - 1 - neighbourhoodRule]
+    )
+
+    // If we have a random noise set, have a chance to invert that cell,
+    // otherwise return the new cell based on the provided rule
+    // Note: randomNoise is a value between 0 and 100 (inclusive)
+    if (randomNoise) {
+      return Math.random() > randomNoise/100 ? newCellValue : (newCellValue + 1) % 2
+    } else {
+      return newCellValue
+    }
   })
 }
 
 // Given an initial automaton state, number of iterations, and rule, generate
 // the automaton and return a two-dimensional array containing this information
-const generateAutomaton = (initial, numIterations, ruleBinary) => {
+const generateAutomaton = (initial, numIterations, ruleBinary, randomNoise) => {
   const iterations = [initial]
   for (let i = 0; i < numIterations; i++) {
-    const newRow = getNextRow(iterations[i], ruleBinary)
+    const newRow = getNextRow(iterations[i], ruleBinary, randomNoise)
     iterations.push(newRow)
   }
   return iterations
@@ -39,7 +49,7 @@ const displayAutomaton = (iterations, genDelay) => {
   // Set the internal canvas width and height,
   // computed from the number of iterations
   canvas.width = 1920
-  const cellSize = canvas.width/iterations[0].length
+  const cellSize = canvas.width / iterations[0].length
   canvas.height = Math.min(32000, Math.ceil(iterations.length * cellSize))
 
   // Determine whether the fill should be black or white depending on the user's colour theme
@@ -56,33 +66,51 @@ const displayAutomaton = (iterations, genDelay) => {
       // Display each cell if it is active
       iteration.forEach((cell, cellIdx) => {
         if (cell !== 1) return
-        ctx.fillRect(cellSize*cellIdx, (iterationIdx*cellSize), cellSize, cellSize)
+        ctx.fillRect(
+          cellSize * cellIdx,
+          iterationIdx * cellSize,
+          cellSize,
+          cellSize
+        )
       })
-    }, genDelay*iterationIdx)
+    }, genDelay * iterationIdx)
   })
 }
 
 // Add submit event on generate button
 const generateButton = document.querySelector('form')
-generateButton.addEventListener('submit', (e) => {
+generateButton.addEventListener('submit', e => {
   e.preventDefault()
   // Find each of the configuration values and assign a value from the input or use default
   const ruleElement = document.querySelector('#rule')
-  const RULE = ruleElement.value !== undefined ? Number(ruleElement.value) : Number(ruleElement.placeholder)
+  const RULE =
+    ruleElement.value !== undefined
+      ? Number(ruleElement.value)
+      : Number(ruleElement.placeholder)
   const widthElement = document.querySelector('#width')
-  const AUTOMATON_WIDTH = Math.floor(widthElement.value/2) || Number(widthElement.placeholder)
+  const AUTOMATON_WIDTH =
+    Math.floor(widthElement.value / 2) || Number(widthElement.placeholder)
   const numIterationElement = document.querySelector('#num-iterations')
-  const NUM_ITERATIONS = Number(numIterationElement.value) || Number(numIterationElement.placeholder)
+  const NUM_ITERATIONS =
+    Number(numIterationElement.value) || Number(numIterationElement.placeholder)
   const genDelayElement = document.querySelector('#gen-delay')
-  const GEN_DELAY = genDelayElement.value !== undefined ? Number(genDelayElement.value) : Number(genDelayElement.placeholder)
+  const GEN_DELAY =
+    genDelayElement.value !== undefined
+      ? Number(genDelayElement.value)
+      : Number(genDelayElement.placeholder)
+  const randomNoiseElement = document.querySelector('#random-noise')
+  const RANDOM_NOISE =
+    randomNoiseElement.value !== undefined
+      ? Number(randomNoiseElement.value)
+      : Number(randomNoiseElement.placeholder)
 
   // Initial configuration
-  const padding = Array.from({length: AUTOMATON_WIDTH}, () => '0').join('')
+  const padding = Array.from({ length: AUTOMATON_WIDTH }, () => '0').join('')
   const initial = `${padding}1${padding}`.split('').map(Number)
   const ruleBinary = RULE.toString(2).padStart(8, '0')
 
   // Generate the values of the automaton using the given configuration
-  const iterations = generateAutomaton(initial, NUM_ITERATIONS, ruleBinary)
+  const iterations = generateAutomaton(initial, NUM_ITERATIONS, ruleBinary, RANDOM_NOISE)
   // Display the automaton in the canvas
   displayAutomaton(iterations, GEN_DELAY)
 })

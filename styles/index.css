@@ -58,6 +58,20 @@ main {
 }
 
 form {
+  display: flex;
+  flex-direction: column;
+  -webkit-margin-after: 3em;
+          margin-block-end: 3em;
+}
+form .configuration-container {
+  display: flex;
+  gap: 2em;
+  justify-content: center;
+}
+form .configuration-container h2 {
+  grid-column: span 2;
+}
+form .configuration-container .configuration-set {
   margin-block: 1.5em;
   padding: 1em;
   display: grid;
@@ -65,7 +79,8 @@ form {
   max-width: -webkit-fit-content;
   max-width: -moz-fit-content;
   max-width: fit-content;
-  align-self: center;
+  align-self: start;
+  justify-self: center;
 }
 form label {
   grid-column: 1;
@@ -75,7 +90,9 @@ form input {
   border-radius: 0.25em;
 }
 form button {
-  grid-column: span 2;
+  align-self: center;
+  width: 80%;
+  height: 2em;
 }
 
 .canvas-container {

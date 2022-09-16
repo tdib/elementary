@@ -60,12 +60,29 @@ main {
 }
 
 form {
-  margin-block: 1.5em;
-  padding: 1em;
-  display: grid;
-  gap: 1em;
-  max-width: fit-content;
-  align-self: center;
+  display: flex;
+  flex-direction: column;
+  margin-block-end: 3em;
+
+  .configuration-container {
+    display: flex;
+    gap: 2em;
+    justify-content: center;
+
+    h2 {
+      grid-column: span 2;
+    }
+
+    .configuration-set {
+      margin-block: 1.5em;
+      padding: 1em;
+      display: grid;
+      gap: 1em;
+      max-width: fit-content;
+      align-self: start;
+      justify-self: center;
+    }
+  }
 
   label {
     grid-column: 1;
@@ -77,7 +94,9 @@ form {
   }
 
   button {
-    grid-column: span 2;
+    align-self: center;
+    width: 80%;
+    height: 2em;;
   }
 }
 
