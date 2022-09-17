@@ -80,6 +80,7 @@
       <div class="configuration-container">
         <div class="configuration-set">
           <h2>Main configuration</h2>
+
           <label for="rule">Rule</label>
           <input id="rule" type="number" min="0" max="255" placeholder="90" value="90">
 
@@ -92,12 +93,18 @@
           <label for="gen-delay">Generation delay</label>
           <input id="gen-delay" type="number" min="0" placeholder="5" value="5">
         </div>
+
         <div class="configuration-set">
           <h2>Experimental configuration</h2>
+
+          <label for="initial-seed">Initial seed</label>
+          <input id="initial-seed" type="number" min="1" placeholder="1" value="1">
+
           <label for="random-noise">Random noise percentage</label>
           <input id="random-noise" type="number" min="0" max="100" step="0.0005" placeholder="0" value="0">
         </div>
       </div>
+
       <button>Generate!</button>
     </form>
 

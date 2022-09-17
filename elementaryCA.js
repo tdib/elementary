@@ -83,21 +83,31 @@ generateButton.addEventListener('submit', e => {
   e.preventDefault()
   // Find each of the configuration values and assign a value from the input or use default
   const ruleElement = document.querySelector('#rule')
-  const RULE =
+  const RULE = 
     ruleElement.value !== undefined
       ? Number(ruleElement.value)
       : Number(ruleElement.placeholder)
+
   const widthElement = document.querySelector('#width')
   const AUTOMATON_WIDTH =
     Math.floor(widthElement.value / 2) || Number(widthElement.placeholder)
+
   const numIterationElement = document.querySelector('#num-iterations')
   const NUM_ITERATIONS =
     Number(numIterationElement.value) || Number(numIterationElement.placeholder)
+
   const genDelayElement = document.querySelector('#gen-delay')
   const GEN_DELAY =
     genDelayElement.value !== undefined
       ? Number(genDelayElement.value)
       : Number(genDelayElement.placeholder)
+
+  const initialSeedElement = document.querySelector('#initial-seed')
+  const INITIAL_SEED =
+    initialSeedElement.value !== undefined
+      ? Number(initialSeedElement.value)
+      : Number(initialSeedElement.placeholder)
+  
   const randomNoiseElement = document.querySelector('#random-noise')
   const RANDOM_NOISE =
     randomNoiseElement.value !== undefined
@@ -106,7 +116,7 @@ generateButton.addEventListener('submit', e => {
 
   // Initial configuration
   const padding = Array.from({ length: AUTOMATON_WIDTH }, () => '0').join('')
-  const initial = `${padding}1${padding}`.split('').map(Number)
+  const initial = `${padding}${INITIAL_SEED.toString(2)}${padding}`.split('').map(Number)
   const ruleBinary = RULE.toString(2).padStart(8, '0')
 
   // Generate the values of the automaton using the given configuration
