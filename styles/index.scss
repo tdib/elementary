@@ -93,6 +93,16 @@ form {
     border-radius: .25em;
   }
 
+  input[type='checkbox'] {
+    justify-self: left;
+  }
+
+  span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   button {
     align-self: center;
     width: 80%;

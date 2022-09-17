@@ -100,8 +100,23 @@
           <label for="initial-seed">Initial seed</label>
           <input id="initial-seed" type="number" min="1" placeholder="1" value="1">
 
+          <label for="timestamp-initial-seed">Timestamp initial seed</label>
+          <input id="timestamp-initial-seed" type="checkbox">
+
+          <label for="mathrandom-initial-seed">Math.random initial seed</label>
+          <input id="mathrandom-initial-seed" type="checkbox">
+
           <label for="random-noise">Random noise percentage</label>
           <input id="random-noise" type="number" min="0" max="100" step="0.0005" placeholder="0" value="0">
+
+          <label for="num-rng-bits">Number of RNG bits</label>
+          <input id="num-rng-bits" type="number" min="0" placeholder="0" value="0">
+
+          <label>Random decimal generated: </label>
+          <span id="rng-decimal"></span>
+
+          <label>Random binary generated: </label>
+          <span id="rng-binary"></span>
         </div>
       </div>
 
@@ -115,6 +130,7 @@
 
   <script src="elementaryCA.js"></script>
   <script src="setRandomRule.js"></script>
+  <script src="setRandomSeed.js"></script>
   <script src="ruleUpdate.js"></script>
 </body>
 </html>

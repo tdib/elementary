@@ -32,10 +32,20 @@ const getNextRow = (currRow, ruleBinary, randomNoise) => {
 // the automaton and return a two-dimensional array containing this information
 const generateAutomaton = (initial, numIterations, ruleBinary, randomNoise) => {
   const iterations = [initial]
+  const centreIdx = Math.floor(iterations[0].length/2)
+  let randomNumber = []
+
   for (let i = 0; i < numIterations; i++) {
     const newRow = getNextRow(iterations[i], ruleBinary, randomNoise)
+    randomNumber.push(newRow[centreIdx])
     iterations.push(newRow)
   }
+
+  const numRNGBits = Number(document.querySelector('#num-rng-bits').value) || numIterations
+  const randomNumberBinary = randomNumber.join('').slice(0, numRNGBits)
+  document.querySelector('#rng-binary').innerHTML = randomNumberBinary
+  const randomNumberDecimal = parseInt(randomNumberBinary, 2)
+  document.querySelector('#rng-decimal').innerHTML = randomNumberDecimal
   return iterations
 }
 
@@ -83,30 +93,42 @@ generateButton.addEventListener('submit', e => {
   e.preventDefault()
   // Find each of the configuration values and assign a value from the input or use default
   const ruleElement = document.querySelector('#rule')
-  const RULE = 
+  const rule = 
     ruleElement.value !== undefined
       ? Number(ruleElement.value)
       : Number(ruleElement.placeholder)
 
   const widthElement = document.querySelector('#width')
-  const AUTOMATON_WIDTH =
+  const automatonWidth =
     Math.floor(widthElement.value / 2) || Number(widthElement.placeholder)
 
-  const numIterationElement = document.querySelector('#num-iterations')
-  const NUM_ITERATIONS =
-    Number(numIterationElement.value) || Number(numIterationElement.placeholder)
+  const numIterationsElement = document.querySelector('#num-iterations')
+  const numIterations =
+    Number(numIterationsElement.value) || Number(numIterationsElement.placeholder)
 
   const genDelayElement = document.querySelector('#gen-delay')
-  const GEN_DELAY =
+  const genDelay =
     genDelayElement.value !== undefined
       ? Number(genDelayElement.value)
       : Number(genDelayElement.placeholder)
 
   const initialSeedElement = document.querySelector('#initial-seed')
-  const INITIAL_SEED =
+  const timestampInitialSeed = document.querySelector('#timestamp-initial-seed').checked
+  const mathRandomInitialSeed = document.querySelector('#mathrandom-initial-seed').checked
+  let initialSeed =
     initialSeedElement.value !== undefined
       ? Number(initialSeedElement.value)
       : Number(initialSeedElement.placeholder)
+  if (timestampInitialSeed && mathRandomInitialSeed) {
+    initialSeed = Math.floor(Math.random() * Number(new Date()))
+  } else if (timestampInitialSeed) {
+    initialSeed = Number(new Date())
+  } else if (mathRandomInitialSeed) {
+    if (initialSeed < 99999) initialSeed = Number(new Date())
+    initialSeed = Math.floor(Math.random() * 2 * initialSeed)
+  }
+  initialSeedElement.value = initialSeed
+
   
   const randomNoiseElement = document.querySelector('#random-noise')
   const RANDOM_NOISE =
@@ -115,12 +137,12 @@ generateButton.addEventListener('submit', e => {
       : Number(randomNoiseElement.placeholder)
 
   // Initial configuration
-  const padding = Array.from({ length: AUTOMATON_WIDTH }, () => '0').join('')
-  const initial = `${padding}${INITIAL_SEED.toString(2)}${padding}`.split('').map(Number)
-  const ruleBinary = RULE.toString(2).padStart(8, '0')
+  const padding = Array.from({ length: automatonWidth }, () => '0').join('')
+  const initial = `${padding}${initialSeed.toString(2)}${padding}`.split('').map(Number)
+  const ruleBinary = rule.toString(2).padStart(8, '0')
 
   // Generate the values of the automaton using the given configuration
-  const iterations = generateAutomaton(initial, NUM_ITERATIONS, ruleBinary, RANDOM_NOISE)
+  const iterations = generateAutomaton(initial, numIterations, ruleBinary, RANDOM_NOISE)
   // Display the automaton in the canvas
-  displayAutomaton(iterations, GEN_DELAY)
+  displayAutomaton(iterations, genDelay)
 })

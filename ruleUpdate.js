@@ -5,6 +5,8 @@ const inputs = document.querySelectorAll('.input')
 const updateRuleSquares = () => {
   // Convert the decimal input to binary
   const ruleBinary = Number(ruleElement.value).toString(2).padStart(8, '0')
+  // Prevent manually inputted values > 255 from throwing an error
+  if (ruleBinary.length > 8) return
   // For every binary digit, set the active class on the respective input square
   for (let i = 0; i < ruleBinary.length; i++) {
     inputs[i].classList.remove('active')

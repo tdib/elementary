@@ -89,6 +89,14 @@ form input {
   grid-column: 2;
   border-radius: 0.25em;
 }
+form input[type=checkbox] {
+  justify-self: left;
+}
+form span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 form button {
   align-self: center;
   width: 80%;
