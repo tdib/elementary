@@ -21,10 +21,8 @@
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
     let drawQueue = []
-    let lastTime = 0
-    let iterationIdx = 0
-    iterations.forEach((iteration) => {
-      if (genDelay === 0) return displayIteration(iteration)
+    iterations.forEach((iteration, iterationIdx) => {
+      if (genDelay === 0) return displayIteration(iteration, iterationIdx)
       drawQueue.push(iteration)
     })
 
@@ -37,9 +35,11 @@
       })
     }
 
+    let lastTime = 0
+    let iterationIdx = 0
     function drawLoop(timestamp) {
       if (!drawQueue.length) return
-      if (drawQueue.length && timestamp > lastTime + genDelay) {
+      if (timestamp > lastTime + genDelay) {
         displayIteration(drawQueue.shift(), iterationIdx)
         iterationIdx++
         lastTime = timestamp
@@ -90,6 +90,7 @@
 </script>
 
 <div class="canvas-container">
+  <!-- <canvas bind:this={canvas}></canvas> -->
   <canvas></canvas>
 </div>
 

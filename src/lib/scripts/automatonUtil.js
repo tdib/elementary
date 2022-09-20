@@ -55,4 +55,3 @@ export function getRandomNumber(iterations, numRNGBits) {
 
   return [randomNumberBinary, randomNumberDecimal]
 }
-  
