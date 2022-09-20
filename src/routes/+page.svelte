@@ -12,8 +12,6 @@
   let numIterations = 150
   let genDelay = 5
 
-  $: console.log(numIterations)
-
   let initialSeed = 1
   let timestampInitialSeed = false
   let mathRandomInitialSeed = false
