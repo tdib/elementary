@@ -5,7 +5,7 @@
   import { Dices } from 'lucide-svelte'
   import getRandomRule from '$lib/scripts/randomRule.js'
   import { onMount } from "svelte"
-  import { generateAutomaton, displayAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
+  import { generateAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
 
   let rule = getRandomRule()
   let width = 300
@@ -20,6 +20,8 @@
 
   let rngBinary
   let rngDecimal
+
+  let canvas
 
   onMount(() => {
     const inputs = document.querySelectorAll('.input')
@@ -222,7 +224,7 @@
     rngDecimal = randomNumbers[1]
 
     // Display the automaton in the canvas
-    displayAutomaton(iterations, genDelay)
+    canvas.displayAutomaton(iterations, Number(genDelay))
   }}>Generate!</button>
 
   {#if rngBinary || rngDecimal}
@@ -230,7 +232,7 @@
     <span>Generated decimal number: {rngDecimal}</span>
   {/if}
 
-  <Canvas />
+  <Canvas bind:this={canvas}/>
 </form>
 
 <style lang='scss'>
