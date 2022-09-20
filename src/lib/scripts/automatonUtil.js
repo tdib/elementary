@@ -1,6 +1,6 @@
 // Given a one-dimensional grid of cells (a single iteration),
 // calculate the next based on the provided rule
-function getNextRow(currRow, ruleBinary, randomNoise) {
+export function getNextRow(currRow, ruleBinary, randomNoisePercent) {
   return currRow.map((cell, idx) => {
     // Find left values of left and right neighbours
     const leftNeighbour = currRow[idx - 1] || 0
@@ -18,8 +18,8 @@ function getNextRow(currRow, ruleBinary, randomNoise) {
     // If we have a random noise set, have a chance to invert that cell,
     // otherwise return the new cell based on the provided rule
     // Note: randomNoise is a value between 0 and 100 (inclusive)
-    if (randomNoise) {
-      return Math.random() > randomNoise/100 ? newCellValue : (newCellValue + 1) % 2
+    if (randomNoisePercent) {
+      return Math.random() > randomNoisePercent/100 ? newCellValue : (newCellValue + 1) % 2
     } else {
       return newCellValue
     }

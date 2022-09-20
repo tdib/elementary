@@ -22,6 +22,8 @@
   let rngBinary
   let rngDecimal
 
+  let automatonLoading = false
+
   let canvas
 
   onMount(() => {
@@ -210,40 +212,54 @@
 
   </div>
 
-  <button type='button' disabled={!rule || !width || !numIterations} on:click={() => {
-    // Initial configuration
-    const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
-    const initialSeedBinary = Number(initialSeed).toString(2)
-    const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
-    const ruleBinary = Number(rule).toString(2).padStart(8, '0')
+  {#if automatonLoading}
+    <button type='button' on:click={() => canvas.cancelGeneration()}>Cancel generation</button>
+  {:else}
+    <button type='button' disabled={!rule || !width || !numIterations} on:click={() => {
+      // #HACK: loading is not set to false when genDelay is 0, so this is the fix
+      if (Number(genDelay) !== 0)
+        automatonLoading = true
 
-    if (timestampInitialSeed && mathRandomInitialSeed) {
-      initialSeed = Math.floor(Math.random() * Number(new Date()))
-    } else if (timestampInitialSeed) {
-      initialSeed = Number(new Date())
-    } else if (mathRandomInitialSeed) {
-      if (initialSeed < 8) initialSeed = 8
-      const max = Math.floor(initialSeed * 1.25)
-      const min = Math.floor(initialSeed * 0.8)
-      initialSeed = Math.floor(Math.random() * (max - min + 1)) + min
-    }
+      // Initial configuration
+      const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
+      const initialSeedBinary = Number(initialSeed).toString(2)
+      const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
+      const ruleBinary = Number(rule).toString(2).padStart(8, '0')
 
-    // Generate the values of the automaton using the given configuration
-    const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent)
-    const randomNumbers = getRandomNumber(iterations, numRNGBits)
-    rngBinary = randomNumbers[0]
-    rngDecimal = randomNumbers[1]
+      if (timestampInitialSeed && mathRandomInitialSeed) {
+        initialSeed = Math.floor(Math.random() * Number(new Date()))
+      } else if (timestampInitialSeed) {
+        initialSeed = Number(new Date())
+      } else if (mathRandomInitialSeed) {
+        if (initialSeed < 8) initialSeed = 8
+        const max = Math.floor(initialSeed * 1.25)
+        const min = Math.floor(initialSeed * 0.8)
+        initialSeed = Math.floor(Math.random() * (max - min + 1)) + min
+      }
 
-    // Display the automaton in the canvas
-    canvas.displayAutomaton(iterations, Number(genDelay))
-  }}>Generate!</button>
+      // Generate the values of the automaton using the given configuration
+      const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent)
+      const randomNumbers = getRandomNumber(iterations, numRNGBits)
+      rngBinary = randomNumbers[0]
+      rngDecimal = randomNumbers[1]
+
+      // Display the automaton in the canvas
+      canvas.displayAutomaton(iterations, Number(genDelay))
+    }}>Generate!</button>
+  {/if}
 
   {#if rngBinary || rngDecimal}
     <span>Generated binary number: {rngBinary}</span>
     <span>Generated decimal number: {rngDecimal}</span>
   {/if}
 
-  <Canvas bind:this={canvas}/>
+  <Canvas
+    bind:this={canvas}
+    {infiniscroll}
+    {ruleBinary}
+    {randomNoisePercent}
+    bind:automatonLoading={automatonLoading}
+  />
 </form>
 
 <style lang='scss'>

@@ -1,5 +1,15 @@
 <script>
+  import { getNextRow } from '$lib/scripts/automatonUtil.js'
+  export let infiniscroll
+  export let ruleBinary
+  export let randomNoisePercent
+  export let automatonLoading
   let currAnimation
+
+  export function cancelGeneration() {
+    automatonLoading = false
+    cancelAnimationFrame(currAnimation)
+  }
 
   export function displayAutomaton(iterations, genDelay) {
     // Link to html canvas element
@@ -20,6 +30,7 @@
     cancelAnimationFrame(currAnimation)
     ctx.clearRect(0, 0, canvas.width, canvas.height)
 
+    // Dispatch each row to either generate immediately or be queued for rendering
     let drawQueue = []
     iterations.forEach((iteration, iterationIdx) => {
       if (genDelay === 0) return displayIteration(iteration, iterationIdx)
@@ -33,21 +44,38 @@
         if (cell !== 1) return
         ctx.fillRect(cellSize*cellIdx, (iterationIdx*cellSize), cellSize, cellSize)
       })
+      // * This isn't setting the loading to false for some reason (but it is being reached)
+      if (!infiniscroll && iterationIdx === iterations.length-1) {
+        automatonLoading = false
+      }
     }
 
     let lastTime = 0
     let iterationIdx = 0
     function drawLoop(timestamp) {
-      if (!drawQueue.length) return
-      if (timestamp > lastTime + genDelay) {
-        displayIteration(drawQueue.shift(), iterationIdx)
-        iterationIdx++
-        lastTime = timestamp
+      // Infiniscroll is activated and the end of the iterations have been reached
+      if (infiniscroll && iterationIdx >= iterations.length) {
+        if (timestamp > lastTime + genDelay) {
+          iterations = iterations.slice(1, iterations.length)
+          iterations.push(getNextRow(iterations[iterations.length-1], ruleBinary, randomNoisePercent))
+          displayAutomaton(iterations, 0)
+        }
+      // Execution as normal - either infiniscroll is disabled or the specified number
+      // of durations has not yet been reached
+      } else {
+        if (!infiniscroll && !drawQueue.length) {
+          automatonLoading = false
+          return
+        }
+        if (timestamp > lastTime + genDelay) displayIteration(drawQueue.shift(), iterationIdx)
       }
+      iterationIdx++
+      lastTime = timestamp
       currAnimation = requestAnimationFrame(drawLoop)
     }
     drawLoop()
   }
+
 </script>
 
 <div class="canvas-container">
