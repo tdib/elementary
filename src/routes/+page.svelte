@@ -48,8 +48,6 @@
   // Based on the rule in the input section, calculate the binary value
   let ruleBinary
   $: ruleBinary = Number(rule).toString(2).padStart(8, '0').split('').map((x) => Number(x))
-
-
 </script>
 
 <h1>Elementary Cellular Automata</h1>
@@ -171,6 +169,8 @@
         step: 0.0005,
         placeholder: 0,
       }}
+      info='This percentage will be used as the chance to invert the generation of any given bit.
+      For example, setting this to 0.005% will randomly change the rule of 0.005% of the generated cells.'
       bind:value={randomNoisePercent}
     />
 
@@ -182,6 +182,10 @@
         max: 32,
         placeholder: 0,
       }}
+      info='This number determines the number of bits used to calculate a random number from the automaton.
+      A value of 8 means the first eight bits of the central column will be used. If the value of this option
+      is larger than the number of iterations, then it will only consider the number of iterations.
+      This option is best paired with a randomised initial seed.'
       bind:value={numRNGBits}
     />
   </div>
@@ -192,6 +196,15 @@
     const initialSeedBinary = Number(initialSeed).toString(2)
     const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
     const ruleBinary = Number(rule).toString(2).padStart(8, '0')
+
+    if (!!timestampInitialSeed && !!mathRandomInitialSeed) {
+      initialSeed = Math.floor(Math.random() * Number(new Date()))
+    } else if (!!timestampInitialSeed) {
+      initialSeed = Number(new Date())
+    } else if (!!mathRandomInitialSeed) {
+      if (initialSeed < 99999) initialSeed = Number(new Date())
+      initialSeed = Math.floor(initialSeed * (Math.random()+0.8) * 1.5)
+    }
 
     // Generate the values of the automaton using the given configuration
     const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent)

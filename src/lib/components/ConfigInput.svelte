@@ -35,11 +35,9 @@
     align-items: center;
 
     .info-group {
-      // display: flex;
       gap: .25em;
 
       .info-button {
-        // position: absolute;
         cursor: pointer;
         background: none;
         border: none;
@@ -66,9 +64,8 @@
     font-size: 1em;
     height: 1.5em;
     margin-inline-start: auto;
-    max-width: 5em;
     background-color: var(--surface);
-    min-width: 5em;
+    width: 5em;
   }
 
   input[type='checkbox'] {

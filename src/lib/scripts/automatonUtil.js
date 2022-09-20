@@ -52,7 +52,6 @@ export function getRandomNumber(iterations, numRNGBits) {
 
   const randomNumberBinary = randomNumber.join('').slice(0, numRNGBits)
   const randomNumberDecimal = parseInt(randomNumberBinary, 2)
-  console.log(randomNumberBinary, randomNumberDecimal)
 
   return [randomNumberBinary, randomNumberDecimal]
 }
