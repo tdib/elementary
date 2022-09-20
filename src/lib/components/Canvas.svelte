@@ -37,25 +37,15 @@
       drawQueue.push(iteration)
     })
 
-    // Given a row/iteration and its index (depth), display it on the canvas
-    function displayIteration(iteration, iterationIdx) {
-      // Display each cell if it is active
-      iteration.forEach((cell, cellIdx) => {
-        if (cell !== 1) return
-        ctx.fillRect(cellSize*cellIdx, (iterationIdx*cellSize), cellSize, cellSize)
-      })
-      // * This isn't setting the loading to false for some reason (but it is being reached)
-      if (!infiniscroll && iterationIdx === iterations.length-1) {
-        automatonLoading = false
-      }
-    }
-
     let lastTime = 0
     let iterationIdx = 0
+    drawLoop()
+
     function drawLoop(timestamp) {
       // Infiniscroll is activated and the end of the iterations have been reached
       if (infiniscroll && iterationIdx >= iterations.length) {
         if (timestamp > lastTime + genDelay) {
+          // Remove the first iteration and generate a new one at the end, then display instantly
           iterations = iterations.slice(1, iterations.length)
           iterations.push(getNextRow(iterations[iterations.length-1], ruleBinary, randomNoisePercent))
           displayAutomaton(iterations, 0)
@@ -63,17 +53,32 @@
       // Execution as normal - either infiniscroll is disabled or the specified number
       // of durations has not yet been reached
       } else {
-        if (!infiniscroll && !drawQueue.length) {
-          automatonLoading = false
-          return
+        // We have nothing left to render - return so we don't infinitely recurse
+        if (!drawQueue.length) return
+        // Assuming the generation delay has passed, display the next iteration
+        if (timestamp > lastTime + genDelay) {
+          displayIteration(drawQueue.shift(), iterationIdx)
+          iterationIdx++
+          lastTime = timestamp
         }
-        if (timestamp > lastTime + genDelay) displayIteration(drawQueue.shift(), iterationIdx)
       }
-      iterationIdx++
-      lastTime = timestamp
       currAnimation = requestAnimationFrame(drawLoop)
     }
-    drawLoop()
+
+    // Given a row/iteration and its index (depth), display it on the canvas
+    function displayIteration(iteration, iterationIdx) {
+      // Display each cell if it is active
+      iteration.forEach((cell, cellIdx) => {
+        if (cell !== 1) return
+        ctx.fillRect(cellSize*cellIdx, (iterationIdx*cellSize), cellSize, cellSize)
+      })
+      
+      // Once we reach the final iteration, cancel loading
+      // * This isn't setting the loading to false for some reason (but it is being reached)
+      if (!infiniscroll && iterationIdx === iterations.length-1) {
+        automatonLoading = false
+      }
+    }
   }
 
 </script>
