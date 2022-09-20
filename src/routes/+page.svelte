@@ -189,7 +189,8 @@
   <button type='button' on:click={() => {
     // Initial configuration
     const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
-    const initial = `${padding}1${padding}`.split('').map(Number)
+    const initialSeedBinary = Number(initialSeed).toString(2)
+    const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
     const ruleBinary = Number(rule).toString(2).padStart(8, '0')
 
     // Generate the values of the automaton using the given configuration
