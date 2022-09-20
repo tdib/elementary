@@ -24,7 +24,11 @@
   </div>
   <div class='input-group'>
     <slot />
-    <input id={nameProcessed} {...inputProps} bind:value={value}>
+    {#if inputProps.type === 'checkbox'}
+      <input id={nameProcessed} {...inputProps} type='checkbox' bind:checked={value}>
+    {:else}
+      <input id={nameProcessed} {...inputProps} bind:value={value}>
+    {/if}
   </div>
 </div>
 
