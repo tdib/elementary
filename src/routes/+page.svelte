@@ -10,13 +10,14 @@
   let rule = getRandomRule()
   let width = 300
   let numIterations = 150
-  let genDelay = 5
+  let genDelay = 10
 
   let initialSeed = 1
   let timestampInitialSeed = false
   let mathRandomInitialSeed = false
   let randomNoisePercent = 0
   let numRNGBits = 16
+  let infiniscroll = false
 
   let rngBinary
   let rngDecimal
@@ -123,7 +124,7 @@
       inputProps={{
         type: 'number',
         min: 0,
-        placeholder: 5,
+        placeholder: 10,
       }}
       info='The buffer time between the generation of each iteration. A value of 0 will mean (near) instant
       generation, while a value of 5 will slowly display each iteration one by one in a cascading effect.
@@ -197,6 +198,16 @@
       This option is best paired with a randomised initial seed.'
       bind:value={numRNGBits}
     />
+
+    <ConfigInput
+      name='Infiniscroll'
+      inputProps={{
+        type: 'checkbox',
+      }}
+      info='This will endlessly generate the automata corresponding to the selected rule. This one is fun.'
+      bind:value={infiniscroll}
+    />
+
   </div>
 
   <button type='button' disabled={!rule || !width || !numIterations} on:click={() => {
