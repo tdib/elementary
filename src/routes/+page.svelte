@@ -1,13 +1,15 @@
 <script>
   import RuleSquare from "$lib/components/RuleSquare.svelte"
   import ConfigInput from "$lib/components/ConfigInput.svelte"
+  import Canvas from '$lib/components/Canvas.svelte'
   import { Dices } from 'lucide-svelte'
   import getRandomRule from '$lib/scripts/randomRule.js'
   import { onMount } from "svelte"
+  import { generateAutomaton, displayAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
 
   let rule = getRandomRule()
-  let width = 30
-  let numIterations = 150
+  let width = 5
+  let numIterations = 5
   let genDelay = 5
 
   let initialSeed = 1
@@ -15,6 +17,9 @@
   let mathRandomInitialSeed = false
   let randomNoisePercent = 0
   let numRNGBits = 16
+
+  let rngBinary
+  let rngDecimal
 
   onMount(() => {
     const inputs = document.querySelectorAll('.input')
@@ -133,6 +138,8 @@
         min: 1,
         placeholder: 1,
       }}
+      info='Determines the configuration of bits in the first row. The default value is 1, a single
+      active cell.'
       bind:value={initialSeed}
     />
 
@@ -141,6 +148,8 @@
       inputProps={{
         type: 'checkbox',
       }}
+      info='Uses the current time (milliseconds since January 1 1970) as an initial seed.
+      Enabling this option will disable the ability to input your own initial seed.'
       bind:value={timestampInitialSeed}
     />
 
@@ -149,6 +158,7 @@
       inputProps={{
         type: 'checkbox'
       }}
+      info=''
       bind:value={mathRandomInitialSeed}
     />
 
@@ -168,7 +178,8 @@
       name='Number of RNG bits'
       inputProps={{
         type: 'number',
-        min: 0,
+        min: 1,
+        max: 32,
         placeholder: 0,
       }}
       bind:value={numRNGBits}
@@ -176,23 +187,28 @@
   </div>
 
   <button type='button' on:click={() => {
-    console.log({
-      rule,
-      width,
-      numIterations,
-      genDelay,
-      initialSeed,
-      timestampInitialSeed,
-      mathRandomInitialSeed,
-      randomNoisePercent,
-      numRNGBits,
-    })
+    // Initial configuration
+    const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
+    const initial = `${padding}1${padding}`.split('').map(Number)
+    const ruleBinary = Number(rule).toString(2).padStart(8, '0')
+
+    // Generate the values of the automaton using the given configuration
+    const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent)
+    const randomNumbers = getRandomNumber(iterations, numRNGBits)
+    rngBinary = randomNumbers[0]
+    rngDecimal = randomNumbers[1]
+
+    // Display the automaton in the canvas
+    displayAutomaton(iterations, genDelay)
   }}>Generate!</button>
+
+  {#if rngBinary || rngDecimal}
+    <span>Generated binary number: {rngBinary}</span>
+    <span>Generated decimal number: {rngDecimal}</span>
+  {/if}
+
+  <Canvas />
 </form>
-
-
-<!-- random binary generated -->
-<!-- random decimal generated -->
 
 <style lang='scss'>
   .ruleset-container {
