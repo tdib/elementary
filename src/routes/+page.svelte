@@ -17,7 +17,10 @@
   let mathRandomInitialSeed = false
   let randomNoisePercent = 0
   let numRNGBits = 16
+  let borderCellValue = 'off'
   let infiniscroll = false
+
+  $: console.log(borderCellValue)
 
   let rngBinary
   let rngDecimal
@@ -90,7 +93,7 @@
       update the rule. Updating the rule will affect the generation of the automaton.'
       bind:value={rule}
     >
-      <button type='button' title='Randomise rule' on:click={() => rule = getRandomRule()}>
+      <button type='button' title='Randomise rule' slot='extra-icon' on:click={() => rule = getRandomRule()}>
         <Dices />
       </button>
     </ConfigInput>
@@ -200,6 +203,14 @@
       This option is best paired with a randomised initial seed.'
       bind:value={numRNGBits}
     />
+
+    <ConfigInput name='Border cell value' inputOverride={true}>
+      <select bind:value={borderCellValue} id="border-cell-value" slot='input-override'>
+        <option value="off">Off</option>
+        <option value="on">On</option>
+        <option value="random">Random</option>
+      </select>
+    </ConfigInput>
 
     <ConfigInput
       name='Infiniscroll'

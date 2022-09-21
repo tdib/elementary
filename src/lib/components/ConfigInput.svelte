@@ -8,6 +8,7 @@
   let nameProcessed = name.toLowerCase().replace(' ', '-')
   export let inputProps
   export let value = inputProps?.value
+  export let inputOverride = false
 </script>
 
 <div class='field-container'>
@@ -23,11 +24,15 @@
     {/if}
   </div>
   <div class='input-group'>
-    <slot />
-    {#if inputProps.type === 'checkbox'}
-      <input id={nameProcessed} {...inputProps} type='checkbox' bind:checked={value}>
+    <slot name='extra-icon'/>
+    {#if inputOverride}
+      <slot name='input-override' />
     {:else}
-      <input id={nameProcessed} {...inputProps} bind:value={value}>
+      {#if inputProps.type === 'checkbox'}
+        <input id={nameProcessed} {...inputProps} type='checkbox' bind:checked={value}>
+      {:else}
+        <input id={nameProcessed} {...inputProps} bind:value={value}>
+      {/if}
     {/if}
   </div>
 </div>
