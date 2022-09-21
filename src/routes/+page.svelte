@@ -8,8 +8,8 @@
   import { generateAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
 
   let rule = getRandomRule()
-  let width = 300
-  let numIterations = 150
+  let width = 25
+  let numIterations = 50
   let genDelay = 10
 
   let initialSeed = 1
@@ -20,7 +20,7 @@
   let borderCellValue = 'off'
   let infiniscroll = false
 
-  $: console.log(borderCellValue)
+  $: console.log('new cell value', borderCellValue)
 
   let rngBinary
   let rngDecimal
@@ -249,7 +249,7 @@
       }
 
       // Generate the values of the automaton using the given configuration
-      const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent)
+      const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent, borderCellValue)
       const randomNumbers = getRandomNumber(iterations, numRNGBits)
       rngBinary = randomNumbers[0]
       rngDecimal = randomNumbers[1]
@@ -269,6 +269,7 @@
     {infiniscroll}
     {ruleBinary}
     {randomNoisePercent}
+    {borderCellValue}
     bind:automatonLoading={automatonLoading}
   />
 </form>

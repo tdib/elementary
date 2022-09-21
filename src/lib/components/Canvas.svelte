@@ -47,7 +47,7 @@
         if (timestamp > lastTime + genDelay) {
           // Remove the first iteration and generate a new one at the end, then display instantly
           iterations = iterations.slice(1, iterations.length)
-          iterations.push(getNextRow(iterations[iterations.length-1], ruleBinary, randomNoisePercent))
+          iterations.push(getNextRow(iterations[iterations.length-1], ruleBinary, randomNoisePercent, borderCellValue))
           displayAutomaton(iterations, 0)
         }
       // Execution as normal - either infiniscroll is disabled or the specified number

@@ -1,10 +1,14 @@
 // Given a one-dimensional grid of cells (a single iteration),
 // calculate the next based on the provided rule
-export function getNextRow(currRow, ruleBinary, randomNoisePercent) {
+export function getNextRow(currRow, ruleBinary, randomNoisePercent, borderCellValue) {
+  if (borderCellValue === 'random') borderCellValue = Number(Math.random() > 0.5)
+  else if (borderCellValue === 'on') borderCellValue = 1
+  else if (borderCellValue ==='off') borderCellValue = 0
+
   return currRow.map((cell, idx) => {
     // Find left values of left and right neighbours
-    const leftNeighbour = currRow[idx - 1] || 0
-    const rightNeighbour = currRow[idx + 1] || 0
+    const leftNeighbour = currRow[idx - 1] ?? borderCellValue
+    const rightNeighbour = currRow[idx + 1] ?? borderCellValue
 
     // Convert neighbours to binary bits and decimal
     const neighbourhoodRuleBits = [leftNeighbour, cell, rightNeighbour].join('')
@@ -28,11 +32,11 @@ export function getNextRow(currRow, ruleBinary, randomNoisePercent) {
 
 // Given an initial automaton state, number of iterations, and rule, generate
 // the automaton and return a two-dimensional array containing this information
-export function generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent) {
+export function generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent, borderCellValue) {
   const iterations = [initial]
 
   for (let i = 0; i < numIterations-1; i++) {
-    const newRow = getNextRow(iterations[i], ruleBinary, randomNoisePercent)
+    const newRow = getNextRow(iterations[i], ruleBinary, randomNoisePercent, borderCellValue)
     iterations.push(newRow)
   }
 
