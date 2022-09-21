@@ -62,24 +62,25 @@
       align-items: center;
       gap: .25em;
       margin-inline-start: auto;
+
+      input[type='number'] {
+        border-radius: .25em;
+        outline: none;
+        border: none;
+        padding: .25em;
+        font-size: 1em;
+        height: 1.5em;
+        margin-inline-start: auto;
+        background-color: var(--surface);
+        width: 5em;
+      }
+
+      input[type='checkbox'] {
+        height: 1.75em;
+        width: 1.75em;
+      }
     }
   }
 
-  input[type='number'] {
-    border-radius: .25em;
-    outline: none;
-    border: none;
-    padding: .25em;
-    font-size: 1em;
-    height: 1.5em;
-    margin-inline-start: auto;
-    background-color: var(--surface);
-    width: 5em;
-  }
-
-  input[type='checkbox'] {
-    height: 1.75em;
-    width: 1.75em;
-  }
 
 </style>

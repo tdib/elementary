@@ -20,8 +20,6 @@
   let borderCellValue = 'off'
   let infiniscroll = false
 
-  $: console.log('new cell value', borderCellValue)
-
   let rngBinary
   let rngDecimal
 
@@ -204,8 +202,14 @@
       bind:value={numRNGBits}
     />
 
-    <ConfigInput name='Border cell value' inputOverride={true}>
-      <select bind:value={borderCellValue} id="border-cell-value" slot='input-override'>
+    <ConfigInput
+      name='Border cell value'
+      info='Determines whether the cells at the bounds of the selected width are on or off. "Off" will treat the edges
+      as though the cells are off. "On" will treat them as though they are on. "Random" will randomly select a value
+      between on or off on every iteration.'
+      inputOverride={true}
+    >
+      <select bind:value={borderCellValue} id="border-cell-value" slot='input-override' class='input-override'>
         <option value="off">Off</option>
         <option value="on">On</option>
         <option value="random">Random</option>
