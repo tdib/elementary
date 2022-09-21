@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles/index.css">
+  <!-- Custom fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+  <title>Dib's Elementary CA</title>
+</head>
+<body>
+  <main>
+    <h1>Elementary Cellular Automata</h1>
+    <p>This is a simple implementation of Wolfram's Elementary Automata. Simply plug in the values you would like to experiment with, and either click generate, or press enter.</p>
+    <ul>
+      <li>Rule: Determines the neighbourhood update rules</li>
+      <li>Width: The number of cells that will be generated horizontally</li>
+      <li>Number of iterations: The number of iterations that will be stacked on one another (i.e. vertical height)</li>
+      <li>Generation delay: The buffer between the generation of each iteration - a value of 0 means instant generation</li>
+    </ul>
+    <p>
+      The grid cells below are a visual representation of the chosen rule. This rule may be updated by either clicking on the cells below the rows of three, or by simply typing it into the input field.
+      Refreshing the page will randomly set a new rule.
+    </p>
+
+    <div class="ruleset-container">
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell active"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+      <div class="rule-container">
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell"></div>
+        <div class="rule-cell input active"></div>
+      </div>
+    </div>
+
+    <form>
+      <label for="rule">Rule</label>
+      <input id="rule" type="number" min="0" max="255" placeholder="90" value="90">
+
+      <label for="width">Width </label>
+      <input id="width" type="number" min="3" placeholder="250" value="250">
+
+      <label for="num-iterations">Number of iterations</label>
+      <input id="num-iterations" type="number" min="1" placeholder="250" value="250">
+
+      <label for="gen-delay">Generation delay</label>
+      <input id="gen-delay" type="number" min="0" placeholder="5" value="5">
+
+      <button>Generate!</button>
+    </form>
+
+    <div class="canvas-container">
+      <canvas></canvas>
+    </div>
+  </main>
+
+  <script src="elementaryCA.js"></script>
+  <script src="setRandomRule.js"></script>
+  <script src="ruleUpdate.js"></script>
+</body>
+</html>
