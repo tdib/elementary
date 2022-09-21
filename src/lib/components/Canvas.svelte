@@ -11,7 +11,7 @@
     cancelAnimationFrame(currAnimation)
   }
 
-  export function displayAutomaton(iterations, genDelay) {
+  export function displayAutomaton(iterations, genDelay, borderCellValue) {
     // Link to html canvas element
     const canvas = document.querySelector('canvas')
     const ctx = canvas.getContext('2d')
@@ -48,7 +48,7 @@
           // Remove the first iteration and generate a new one at the end, then display instantly
           iterations = iterations.slice(1, iterations.length)
           iterations.push(getNextRow(iterations[iterations.length-1], ruleBinary, randomNoisePercent, borderCellValue))
-          displayAutomaton(iterations, 0)
+          displayAutomaton(iterations, 0, borderCellValue)
         }
       // Execution as normal - either infiniscroll is disabled or the specified number
       // of durations has not yet been reached
