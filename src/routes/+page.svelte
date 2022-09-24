@@ -8,8 +8,8 @@
   import { generateAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
 
   let rule = getRandomRule()
-  let width = 25
-  let numIterations = 50
+  let width = 300
+  let numIterations = 150
   let genDelay = 10
 
   let initialSeed = 1
@@ -204,12 +204,12 @@
 
     <ConfigInput
       name='Border cell value'
-      info='Determines whether the cells at the bounds of the selected width are on or off. "Off" will treat the edges
-      as though the cells are off. "On" will treat them as though they are on. "Random" will randomly select a value
-      between on or off on every iteration.'
       inputOverride={true}
+      info='Determines whether the cells at the bounds of the selected width are on or off.
+      "Off" will treat the edges as though the cells are off. "On" will treat them as though
+      they are on. "Random" will randomly select a value between on or off on every iteration.'
     >
-      <select bind:value={borderCellValue} id="border-cell-value" slot='input-override' class='input-override'>
+      <select bind:value={borderCellValue} id="border-cell-value" slot='input-override'>
         <option value="off">Off</option>
         <option value="on">On</option>
         <option value="random">Random</option>
@@ -259,7 +259,7 @@
       rngDecimal = randomNumbers[1]
 
       // Display the automaton in the canvas
-      canvas.displayAutomaton(iterations, Number(genDelay))
+      canvas.displayAutomaton(iterations, Number(genDelay), borderCellValue)
     }}>Generate!</button>
   {/if}
 
