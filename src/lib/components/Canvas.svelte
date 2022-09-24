@@ -1,10 +1,21 @@
 <script>
   import { getNextRow } from '$lib/scripts/automatonUtil.js'
+  import { onMount } from 'svelte'
   export let infiniscroll
   export let ruleBinary
   export let randomNoisePercent
   export let automatonLoading
   let currAnimation
+  let canvas
+  let ctx
+
+  onMount(() => {
+    // Link to html canvas element
+    ctx = canvas.getContext('2d')
+
+    // Set the internal canvas width
+    canvas.width = 1920
+  })
 
   export function cancelGeneration() {
     automatonLoading = false
@@ -12,13 +23,7 @@
   }
 
   export function displayAutomaton(iterations, genDelay, borderCellValue) {
-    // Link to html canvas element
-    const canvas = document.querySelector('canvas')
-    const ctx = canvas.getContext('2d')
-
-    // Set the internal canvas width and height,
-    // computed from the number of iterations
-    canvas.width = 1920
+    // Compute and set the canvas height from the number of iterations
     const cellSize = canvas.width/iterations[0].length
     canvas.height = Math.min(32000, Math.ceil(iterations.length * cellSize))
 
@@ -84,7 +89,8 @@
 </script>
 
 <div class="canvas-container">
-  <canvas></canvas>
+  <canvas bind:this={canvas}></canvas>
+  <!-- <canvas></canvas> -->
 </div>
 
 <style lang='scss'>
@@ -98,6 +104,7 @@
     canvas {
       width: 100%;
       box-sizing: border-box;
+      display: block;
     }
   }
   
