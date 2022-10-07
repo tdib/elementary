@@ -16,13 +16,13 @@
   }
 </script>
 
-<div class="rule-container">
+<div class='rule-container'>
   <!-- Display given configuration of cells -->
   {#each neighbourConfig as neighbourCell}
     {#if neighbourCell == 1}
-      <div class="rule-cell active" />
+      <div class='rule-cell active' />
     {:else }
-      <div class="rule-cell" />
+      <div class='rule-cell' />
     {/if}
   {/each}
 

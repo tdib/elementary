@@ -6,3 +6,5 @@ node_modules
 .env
 .env.*
 !.env.example
+styles/index.css
+styles/index.css.map

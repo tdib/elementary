@@ -5,8 +5,8 @@
 
 </script>
 
-<div class="tooltip-container">
-  <button type='button' on:click={closeFn}>
+<div class='tooltip-container'>
+  <button type='button' on:click={closeFn} title='Close tooltip'>
     <X />
   </button>
   <span>{info}</span>

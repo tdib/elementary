@@ -88,7 +88,7 @@
 
 </script>
 
-<div class="canvas-container">
+<div class='canvas-container'>
   <canvas bind:this={canvas}></canvas>
   <!-- <canvas></canvas> -->
 </div>
