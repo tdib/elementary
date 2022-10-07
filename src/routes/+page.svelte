@@ -9,7 +9,7 @@
 
   let rule = getRandomRule()
   let width = 300
-  let numIterations = 150
+  let evolutionSteps = 150
   let genDelay = 10
 
   let initialSeed = 1
@@ -57,6 +57,43 @@
 
   $: if (timestampInitialSeed) initialSeed = Number(new Date())
 
+
+
+  function generate() {
+    // #HACK: loading is not set to false when genDelay is 0, so this is the fix
+    if (Number(genDelay) !== 0)
+      automatonLoading = true
+
+    // Initial configuration
+    const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
+    const initialSeedBinary = Number(initialSeed).toString(2)
+    const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
+    const ruleBinary = Number(rule).toString(2).padStart(8, '0')
+
+    if (timestampInitialSeed && mathRandomInitialSeed) {
+      initialSeed = Math.floor(Math.random() * Number(new Date()))
+    } else if (timestampInitialSeed) {
+      initialSeed = Number(new Date())
+    } else if (mathRandomInitialSeed) {
+      if (initialSeed < 8) initialSeed = 8
+      const max = Math.floor(initialSeed * 1.25)
+      const min = Math.floor(initialSeed * 0.8)
+      initialSeed = Math.floor(Math.random() * (max - min + 1)) + min
+    }
+
+    // Generate the values of the automaton using the given configuration
+    const evolutions = generateAutomaton(initial, evolutionSteps, ruleBinary, randomNoisePercent, borderCellValue)
+    const randomNumbers = getRandomNumber(evolutions, numRNGBits)
+    rngBinary = randomNumbers[0]
+    rngDecimal = randomNumbers[1]
+
+    // Display the automaton in the canvas
+    canvas.displayAutomaton(evolutions, Number(genDelay), borderCellValue)
+  }
+
+
+
+
 </script>
 
 <main>
@@ -91,8 +128,12 @@
         by the squares above the configuration. Alternatively, you may click on directly on these squares to
         update the rule. Updating the rule will affect the generation of the automaton.'
         bind:value={rule}
+        on:enterPressed={generate}
       >
-        <button type='button' title='Randomise rule' slot='extra-icon' on:click={() => rule = getRandomRule()}>
+        <button type='button' title='Randomise rule' slot='extra-icon' on:click={() => {
+          rule = getRandomRule()
+          generate()
+        }}>
           <Dices />
         </button>
       </ConfigInput>
@@ -108,10 +149,11 @@
         smaller, and will require more computation. Note: if a pattern reaches the edge of the defined
         width, the automaton is bounded, and will treat the edges as inactive/dead cells.'
         bind:value={width}
+        on:enterPressed={generate}
       />
 
       <ConfigInput
-        name='Number of iterations'
+        name='Evolution steps'
         inputProps={{
           type: 'number',
           min: 1,
@@ -120,7 +162,8 @@
         info='The number of iterations/rows that will be stacked on top of one another (i.e. vertical height).
         Increasing this will allow you to see more of the pattern, but will increase computation. A good number
         for this is approximately half of the width.'
-        bind:value={numIterations}
+        bind:value={evolutionSteps}
+        on:enterPressed={generate}
       />
 
       <ConfigInput
@@ -134,6 +177,7 @@
         generation, while a value of 5 will slowly display each iteration one by one in a cascading effect.
         Note: this is a purely aesthetic feature, and will not affect the generation of the automaton.'
         bind:value={genDelay}
+        on:enterPressed={generate}
       />
     </div>
 
@@ -150,6 +194,7 @@
         info='Determines the configuration of bits in the first row. The default value is 1, a single
         active cell.'
         bind:value={initialSeed}
+        on:enterPressed={generate}
       />
 
       <ConfigInput
@@ -186,6 +231,7 @@
         info='This percentage will be used as the chance to invert the generation of any given bit.
         For example, setting this to 0.005% will randomly change the rule of 0.005% of the generated cells.'
         bind:value={randomNoisePercent}
+        on:enterPressed={generate}
       />
 
       <ConfigInput
@@ -198,9 +244,10 @@
         }}
         info='This number determines the number of bits used to calculate a random number from the automaton.
         A value of 8 means the first eight bits of the central column will be used. If the value of this option
-        is larger than the number of iterations, then it will only consider the number of iterations.
+        is larger than the number of evolution steps, then it will only consider the number of evolution steps.
         This option is best paired with a randomised initial seed.'
         bind:value={numRNGBits}
+        on:enterPressed={generate}
       />
 
       <ConfigInput
@@ -226,42 +273,13 @@
         bind:value={infiniscroll}
       />
 
+
     </div>
 
     {#if automatonLoading}
       <button type='button' on:click={() => canvas.cancelGeneration()}>Cancel generation</button>
     {:else}
-      <button type='button' disabled={!rule || !width || !numIterations} on:click={() => {
-        // #HACK: loading is not set to false when genDelay is 0, so this is the fix
-        if (Number(genDelay) !== 0)
-          automatonLoading = true
-
-        // Initial configuration
-        const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
-        const initialSeedBinary = Number(initialSeed).toString(2)
-        const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
-        const ruleBinary = Number(rule).toString(2).padStart(8, '0')
-
-        if (timestampInitialSeed && mathRandomInitialSeed) {
-          initialSeed = Math.floor(Math.random() * Number(new Date()))
-        } else if (timestampInitialSeed) {
-          initialSeed = Number(new Date())
-        } else if (mathRandomInitialSeed) {
-          if (initialSeed < 8) initialSeed = 8
-          const max = Math.floor(initialSeed * 1.25)
-          const min = Math.floor(initialSeed * 0.8)
-          initialSeed = Math.floor(Math.random() * (max - min + 1)) + min
-        }
-
-        // Generate the values of the automaton using the given configuration
-        const iterations = generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent, borderCellValue)
-        const randomNumbers = getRandomNumber(iterations, numRNGBits)
-        rngBinary = randomNumbers[0]
-        rngDecimal = randomNumbers[1]
-
-        // Display the automaton in the canvas
-        canvas.displayAutomaton(iterations, Number(genDelay), borderCellValue)
-      }}>Generate!</button>
+      <button type='button' disabled={!rule || !width || !evolutionSteps} on:click={generate}>Generate!</button>
     {/if}
 
     {#if rngBinary || rngDecimal}

@@ -1,6 +1,15 @@
 <script>
   import { Info } from 'lucide-svelte'
   import Tooltip from './Tooltip.svelte'
+  import { createEventDispatcher } from 'svelte'
+
+  // Propagate custom event called "enterPressed" (which activates when enter is pressed on input)
+  const dispatch = createEventDispatcher()
+  function keydownFn(e) {
+    if (e.key === 'Enter') {
+      dispatch('enterPressed')
+    }
+  }
 
   export let info = ''
   let infoOpen = false
@@ -13,6 +22,7 @@
 
 <div class='field-container'>
   <label for={nameProcessed}>{name}</label>
+
   <div class='info-group'>
     {#if info}
       <button class='info-button' type='button' title='More info about {name.toLowerCase()}' on:click={() => infoOpen = !infoOpen}>
@@ -23,6 +33,7 @@
       {/if}
     {/if}
   </div>
+
   <div class='input-group'>
     <slot name='extra-icon'/>
     {#if inputOverride}
@@ -31,13 +42,13 @@
       {#if inputProps.type === 'checkbox'}
         <input id={nameProcessed} {...inputProps} type='checkbox' bind:checked={value}>
       {:else}
-        <input id={nameProcessed} {...inputProps} bind:value={value}>
+        <input id={nameProcessed} {...inputProps} bind:value={value} on:keydown={keydownFn}>
       {/if}
     {/if}
   </div>
 </div>
 
-<style lang="scss">
+<style lang='scss'>
   .field-container {
     display: flex;
     gap: .5em;
