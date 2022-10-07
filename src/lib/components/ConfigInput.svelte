@@ -15,7 +15,7 @@
   let infoOpen = false
   export let name = ''
   let nameProcessed = name.toLowerCase().replace(' ', '-')
-  export let inputProps
+  export let inputProps = {}
   export let value = inputProps?.value
   export let inputOverride = false
 </script>

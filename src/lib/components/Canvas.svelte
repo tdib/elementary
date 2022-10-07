@@ -22,10 +22,10 @@
     cancelAnimationFrame(currAnimation)
   }
 
-  export function displayAutomaton(iterations, genDelay, borderCellValue) {
-    // Compute and set the canvas height from the number of iterations
-    const cellSize = canvas.width/iterations[0].length
-    canvas.height = Math.min(32000, Math.ceil(iterations.length * cellSize))
+  export function displayAutomaton(generations, genDelay, borderCellValue) {
+    // Compute and set the canvas height from the number of generations
+    const cellSize = canvas.width/generations[0].length
+    canvas.height = Math.min(32000, Math.ceil(generations.length * cellSize))
 
     // Determine whether the fill should be black or white depending on the user's colour theme
     const fillColour = window.getComputedStyle(document.body).color
@@ -37,50 +37,55 @@
 
     // Dispatch each row to either generate immediately or be queued for rendering
     let drawQueue = []
-    iterations.forEach((iteration, iterationIdx) => {
-      if (genDelay === 0) return displayIteration(iteration, iterationIdx)
-      drawQueue.push(iteration)
+    generations.forEach((generation, generationIdx) => {
+      if (genDelay === 0) return displayGeneration(generation, generationIdx)
+      drawQueue.push(generation)
     })
 
     let lastTime = 0
-    let iterationIdx = 0
+    let generationIdx = 0
     drawLoop()
 
     function drawLoop(timestamp) {
-      // Infiniscroll is activated and the end of the iterations have been reached
-      if (infiniscroll && iterationIdx >= iterations.length) {
+      // Infiniscroll is activated and the end of the generations have been reached
+      if (infiniscroll && generationIdx >= generations.length) {
         if (timestamp > lastTime + genDelay) {
-          // Remove the first iteration and generate a new one at the end, then display instantly
-          iterations = iterations.slice(1, iterations.length)
-          iterations.push(getNextRow(iterations[iterations.length-1], ruleBinary, randomNoisePercent, borderCellValue))
-          displayAutomaton(iterations, 0, borderCellValue)
+          // Remove the first generation and generate a new one at the end, then display instantly
+          generations = generations.slice(1, generations.length)
+          generations.push(getNextRow(generations[generations.length-1], ruleBinary, randomNoisePercent, borderCellValue))
+          displayAutomaton(generations, 0, borderCellValue)
         }
       // Execution as normal - either infiniscroll is disabled or the specified number
       // of durations has not yet been reached
       } else {
         // We have nothing left to render - return so we don't infinitely recurse
         if (!drawQueue.length) return
-        // Assuming the generation delay has passed, display the next iteration
+        // Assuming the generation delay has passed, display the next generation
         if (timestamp > lastTime + genDelay) {
-          displayIteration(drawQueue.shift(), iterationIdx)
-          iterationIdx++
-          lastTime = timestamp
+          let delayedGenerations = 1
+          while (timestamp > lastTime + delayedGenerations*genDelay) {
+            displayGeneration(drawQueue.shift(), generationIdx)
+            generationIdx++
+            lastTime = timestamp
+
+            delayedGenerations++
+          }
         }
       }
       currAnimation = requestAnimationFrame(drawLoop)
     }
 
-    // Given a row/iteration and its index (depth), display it on the canvas
-    function displayIteration(iteration, iterationIdx) {
+    // Given a row/generation and its index (depth), display it on the canvas
+    function displayGeneration(generation, generationIdx) {
       // Display each cell if it is active
-      iteration.forEach((cell, cellIdx) => {
+      generation.forEach((cell, cellIdx) => {
         if (cell !== 1) return
-        ctx.fillRect(cellSize*cellIdx, (iterationIdx*cellSize), cellSize, cellSize)
+        ctx.fillRect(cellSize*cellIdx, (generationIdx*cellSize), cellSize, cellSize)
       })
       
-      // Once we reach the final iteration, cancel loading
+      // Once we reach the final generation, cancel loading
       // * This isn't setting the loading to false for some reason (but it is being reached)
-      if (!infiniscroll && iterationIdx === iterations.length-1) {
+      if (!infiniscroll && generationIdx === generations.length-1) {
         automatonLoading = false
       }
     }

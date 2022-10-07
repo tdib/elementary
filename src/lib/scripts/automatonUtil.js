@@ -1,4 +1,4 @@
-// Given a one-dimensional grid of cells (a single iteration),
+// Given a one-dimensional grid of cells (a single generation),
 // calculate the next based on the provided rule
 export function getNextRow(currRow, ruleBinary, randomNoisePercent, borderCellValue) {
   if (borderCellValue === 'random') borderCellValue = Number(Math.random() > 0.5)
@@ -14,7 +14,7 @@ export function getNextRow(currRow, ruleBinary, randomNoisePercent, borderCellVa
     const neighbourhoodRuleBits = [leftNeighbour, cell, rightNeighbour].join('')
     const neighbourhoodRule = parseInt(neighbourhoodRuleBits, 2)
 
-    // Determine the value of the cell in the next iteration based on the rule provided
+    // Determine the value of the cell in the next generation based on the rule provided
     const newCellValue = parseInt(
       ruleBinary[ruleBinary.length - 1 - neighbourhoodRule]
     )
@@ -30,28 +30,28 @@ export function getNextRow(currRow, ruleBinary, randomNoisePercent, borderCellVa
   })
 }
 
-// Given an initial automaton state, number of iterations, and rule, generate
+// Given an initial automaton state, number of generations, and rule, generate
 // the automaton and return a two-dimensional array containing this information
-export function generateAutomaton(initial, numIterations, ruleBinary, randomNoisePercent, borderCellValue) {
-  const iterations = [initial]
+export function generateAutomaton(initial, numGenerations, ruleBinary, randomNoisePercent, borderCellValue) {
+  const generations = [initial]
 
-  for (let i = 0; i < numIterations-1; i++) {
-    const newRow = getNextRow(iterations[i], ruleBinary, randomNoisePercent, borderCellValue)
-    iterations.push(newRow)
+  for (let i = 0; i < numGenerations-1; i++) {
+    const newRow = getNextRow(generations[i], ruleBinary, randomNoisePercent, borderCellValue)
+    generations.push(newRow)
   }
 
-  return iterations
+  return generations
 }
 
 // Given the generated rows of the automaton, calculate a binary number of the central
 // row, and return this number as well as a decimal conversion
-export function getRandomNumber(iterations, numRNGBits) {
-  if (numRNGBits > iterations.length) numRNGBits = iterations.length
-  const centreIdx = Math.floor(iterations[0].length/2)
+export function getRandomNumber(generations, numRNGBits) {
+  if (numRNGBits > generations.length) numRNGBits = generations.length
+  const centreIdx = Math.floor(generations[0].length/2)
   let randomNumber = []
 
   for (let i = 0; i < numRNGBits; i++) {
-    randomNumber.push(iterations[i][centreIdx])
+    randomNumber.push(generations[i][centreIdx])
   }
 
   const randomNumberBinary = randomNumber.join('').slice(0, numRNGBits)

@@ -6,26 +6,42 @@
   import getRandomRule from '$lib/scripts/randomRule.js'
   import { onMount } from 'svelte'
   import { generateAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
+  import classification from '$lib/misc/classification.json'
 
   let rule = getRandomRule()
   let width = 300
-  let evolutionSteps = 150
-  let genDelay = 10
+  let numGenerationSteps = 150
+  let genDelay = 5
 
   let initialSeed = 1
-  let timestampInitialSeed = false
   let mathRandomInitialSeed = false
+  let completeRandomInitialSeed = false
   let randomNoisePercent = 0
   let numRNGBits = 16
   let borderCellValue = 'off'
   let infiniscroll = false
 
+  let ruleClassification = '-'
+  let flip
+  let invert
   let rngBinary
   let rngDecimal
 
   let automatonLoading = false
 
   let canvas
+
+
+  // $: {
+  //   ruleClassification = 'Unknown'
+  //   for (let [classification, classificationRules] of Object.entries(classification.classes)) {
+  //     if (classificationRules.includes(Number(rule))) {
+  //       ruleClassification = classification
+  //       break
+  //     }
+  //   }
+  //   if (ruleClassification === "Unknown") console.log('could not find')
+  // }
 
   onMount(() => {
     const inputs = document.querySelectorAll('.input')
@@ -55,26 +71,38 @@
   let ruleBinary
   $: ruleBinary = Number(rule).toString(2).padStart(8, '0').split('').map((x) => Number(x))
 
-  $: if (timestampInitialSeed) initialSeed = Number(new Date())
-
-
 
   function generate() {
     // #HACK: loading is not set to false when genDelay is 0, so this is the fix
     if (Number(genDelay) !== 0)
       automatonLoading = true
-
+    
     // Initial configuration
-    const padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
-    const initialSeedBinary = Number(initialSeed).toString(2)
-    const initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
     const ruleBinary = Number(rule).toString(2).padStart(8, '0')
+    const initialSeedBinary = Number(initialSeed).toString(2)
+    let padding
+    let initial = []
+    if (completeRandomInitialSeed) {
+      for (let i = 0; i < width; i++) {
+        initial.push(Math.random() > 0.5 ? 1 : 0)
+      }
+    } else {
+      padding = Array.from({length: Math.floor(width/2)}, () => '0').join('')
+      initial = `${padding}${initialSeedBinary}${padding}`.split('').map(Number)
+    }
 
-    if (timestampInitialSeed && mathRandomInitialSeed) {
-      initialSeed = Math.floor(Math.random() * Number(new Date()))
-    } else if (timestampInitialSeed) {
-      initialSeed = Number(new Date())
-    } else if (mathRandomInitialSeed) {
+    ruleClassification = 'Unknown'
+    for (let [classificationName, classificationRules] of Object.entries(classification.classes)) {
+      if (classificationRules.includes(Number(rule))) {
+        ruleClassification = classificationName
+        break
+      }
+    }
+
+    flip = classification.flips[rule]
+    invert = classification.inverts[rule]
+
+    if (mathRandomInitialSeed) {
       if (initialSeed < 8) initialSeed = 8
       const max = Math.floor(initialSeed * 1.25)
       const min = Math.floor(initialSeed * 0.8)
@@ -82,13 +110,13 @@
     }
 
     // Generate the values of the automaton using the given configuration
-    const evolutions = generateAutomaton(initial, evolutionSteps, ruleBinary, randomNoisePercent, borderCellValue)
-    const randomNumbers = getRandomNumber(evolutions, numRNGBits)
+    const generations = generateAutomaton(initial, numGenerationSteps, ruleBinary, randomNoisePercent, borderCellValue)
+    const randomNumbers = getRandomNumber(generations, numRNGBits)
     rngBinary = randomNumbers[0]
     rngDecimal = randomNumbers[1]
 
     // Display the automaton in the canvas
-    canvas.displayAutomaton(evolutions, Number(genDelay), borderCellValue)
+    canvas.displayAutomaton(generations, Number(genDelay), borderCellValue)
   }
 
 
@@ -132,7 +160,7 @@
       >
         <button type='button' title='Randomise rule' slot='extra-icon' on:click={() => {
           rule = getRandomRule()
-          generate()
+          if (!automatonLoading || !infiniscroll) generate()
         }}>
           <Dices />
         </button>
@@ -153,16 +181,16 @@
       />
 
       <ConfigInput
-        name='Evolution steps'
+        name='Generation steps'
         inputProps={{
           type: 'number',
           min: 1,
           placeholder: 150,
         }}
-        info='The number of iterations/rows that will be stacked on top of one another (i.e. vertical height).
+        info='The number of generations/rows that will be stacked on top of one another (i.e. vertical height).
         Increasing this will allow you to see more of the pattern, but will increase computation. A good number
         for this is approximately half of the width.'
-        bind:value={evolutionSteps}
+        bind:value={numGenerationSteps}
         on:enterPressed={generate}
       />
 
@@ -171,11 +199,12 @@
         inputProps={{
           type: 'number',
           min: 0,
-          placeholder: 10,
+          placeholder: 5,
         }}
-        info='The buffer time between the generation of each iteration. A value of 0 will mean (near) instant
-        generation, while a value of 5 will slowly display each iteration one by one in a cascading effect.
-        Note: this is a purely aesthetic feature, and will not affect the generation of the automaton.'
+        info='The buffer time in milliseconds between the generation of each generation. A value of 0 will mean
+        (near) instant generation, while a value of 5 will slowly display each generation one by one in a
+        cascading effect. Note: this is a purely aesthetic feature, and will not affect the generation of
+        the automaton.'
         bind:value={genDelay}
         on:enterPressed={generate}
       />
@@ -189,23 +218,12 @@
           type: 'number',
           min: 1,
           placeholder: 1,
-          disabled: timestampInitialSeed,
+          disabled: completeRandomInitialSeed,
         }}
         info='Determines the configuration of bits in the first row. The default value is 1, a single
         active cell.'
         bind:value={initialSeed}
         on:enterPressed={generate}
-      />
-
-      <ConfigInput
-        name='Timestamp initial seed'
-        inputProps={{
-          type: 'checkbox',
-        }}
-        info='Uses the current time (milliseconds since January 1 1970) as an initial seed.
-        Enabling this option will disable the ability to input your own initial seed. Note: the seed will
-        be computed after the generate button is pressed.'
-        bind:value={timestampInitialSeed}
       />
 
       <ConfigInput
@@ -217,6 +235,15 @@
         your initial seed is, the larger the effect of this randomness will become. Note: this multiplication
         will take place after the generate button is pressed.'
         bind:value={mathRandomInitialSeed}
+      />
+
+      <ConfigInput
+        name='Random initial seed'
+        inputProps={{
+          type: 'checkbox'
+        }}
+        info='Randomises initial seed by completely randomising the entire width of the initial generation row.'
+        bind:value={completeRandomInitialSeed}
       />
 
       <ConfigInput
@@ -244,7 +271,7 @@
         }}
         info='This number determines the number of bits used to calculate a random number from the automaton.
         A value of 8 means the first eight bits of the central column will be used. If the value of this option
-        is larger than the number of evolution steps, then it will only consider the number of evolution steps.
+        is larger than the number of generation steps, then it will only consider the number of generation steps.
         This option is best paired with a randomised initial seed.'
         bind:value={numRNGBits}
         on:enterPressed={generate}
@@ -255,7 +282,7 @@
         inputOverride={true}
         info='Determines whether the cells at the bounds of the selected width are on or off.
         "Off" will treat the edges as though the cells are off. "On" will treat them as though
-        they are on. "Random" will randomly select a value between on or off on every iteration.'
+        they are on. "Random" will randomly select a value between on or off on every generation.'
       >
         <select bind:value={borderCellValue} id='border-cell-value' slot='input-override'>
           <option value='off'>Off</option>
@@ -279,13 +306,44 @@
     {#if automatonLoading}
       <button type='button' on:click={() => canvas.cancelGeneration()}>Cancel generation</button>
     {:else}
-      <button type='button' disabled={!rule || !width || !evolutionSteps} on:click={generate}>Generate!</button>
+      <button type='button' disabled={!rule || !width || !numGenerationSteps} on:click={generate}>Generate!</button>
     {/if}
 
-    {#if rngBinary || rngDecimal}
-      <span>Generated binary number: {rngBinary}</span>
-      <span>Generated decimal number: {rngDecimal}</span>
-    {/if}
+
+    <div class='automaton-info'>
+      <!-- Display the generated automaton's class -->
+      <span>Class: {ruleClassification}</span>
+
+      <!-- Display (if any) the flipped automaton, and allow user to click on label to generate it -->
+      <span>
+        Flip:
+        <button class='clickable-text' type='button'
+          disabled={!flip} title={flip && 'Generate flipped automaton'}
+          on:click={() => {
+            rule = flip
+            generate()
+          }}>{flip ?? '-'}</button>
+      </span>
+      
+      <!-- Display (if any) the inverted automaton, and allow user to click on label to generate it -->
+      <span>
+        Invert:
+        <button class='clickable-text' type='button'
+          disabled={!invert} title={invert && 'Generate inverted automaton'}
+          on:click={() => {
+            rule = invert
+            generate()
+          }}>{invert ?? '-'}</button>
+      </span>
+    </div>
+
+    <!-- Display randomly generated numbers -->
+    <div class='automaton-info'>
+      {#if rngBinary || rngDecimal}
+        <span>Generated binary number: {rngBinary}</span>
+        <span>Generated decimal number: {rngDecimal}</span>
+      {/if}
+    </div>
 
     <Canvas
       bind:this={canvas}
@@ -328,12 +386,37 @@
         border: none;
         cursor: pointer;
       }
+
     } 
 
-    > button {
+    > button:not(.clickable-text) {
       height: 3em;
       width: 100%;
     }
+
+    .automaton-info {
+      width: 100%;
+      display: flex;
+      justify-content: space-evenly;
+
+      span {
+        font-size: 1.25em;
+        .clickable-text {
+          background: none;
+          border: none;
+          cursor: pointer;
+          text-decoration: underline;
+          font-size: inherit;
+
+        }
+          :disabled {
+            cursor: default;
+            text-decoration: none;
+            color: var(--active);
+          }
+      }
+    }
+
 
   }
 
