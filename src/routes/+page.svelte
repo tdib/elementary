@@ -2,11 +2,11 @@
   import RuleSquare from '$lib/components/RuleSquare.svelte'
   import ConfigInput from '$lib/components/ConfigInput.svelte'
   import Canvas from '$lib/components/Canvas.svelte'
-  import { Dices } from 'lucide-svelte'
   import getRandomRule from '$lib/scripts/randomRule.js'
-  import { onMount } from 'svelte'
-  import { generateAutomaton, getRandomNumber } from '$lib/scripts/automatonUtil.js'
+  import { generateAutomaton, getRandomNumber, getComplementRule } from '$lib/scripts/automatonUtil.js'
   import classification from '$lib/misc/classification.json'
+  import { onMount } from 'svelte'
+  import { Dices } from 'lucide-svelte'
 
   let rule = getRandomRule()
   let width = 300
@@ -22,7 +22,7 @@
   let infiniscroll = false
 
   let ruleClassification = '-'
-  let flip
+  let complementRule
   let invert
   let rngBinary
   let rngDecimal
@@ -30,18 +30,6 @@
   let automatonLoading = false
 
   let canvas
-
-
-  // $: {
-  //   ruleClassification = 'Unknown'
-  //   for (let [classification, classificationRules] of Object.entries(classification.classes)) {
-  //     if (classificationRules.includes(Number(rule))) {
-  //       ruleClassification = classification
-  //       break
-  //     }
-  //   }
-  //   if (ruleClassification === "Unknown") console.log('could not find')
-  // }
 
   onMount(() => {
     const inputs = document.querySelectorAll('.input')
@@ -99,8 +87,8 @@
       }
     }
 
-    flip = classification.flips[rule]
     invert = classification.inverts[rule]
+    complementRule = getComplementRule(rule)
 
     if (mathRandomInitialSeed) {
       if (initialSeed < 8) initialSeed = 8
@@ -316,13 +304,13 @@
 
       <!-- Display (if any) the flipped automaton, and allow user to click on label to generate it -->
       <span>
-        Flip:
+        Complement:
         <button class='clickable-text' type='button'
-          disabled={!flip} title={flip && 'Generate flipped automaton'}
+          disabled={!complementRule} title={complementRule && 'Generate flipped automaton'}
           on:click={() => {
-            rule = flip
+            rule = complementRule
             generate()
-          }}>{flip ?? '-'}</button>
+          }}>{complementRule ?? '-'}</button>
       </span>
       
       <!-- Display (if any) the inverted automaton, and allow user to click on label to generate it -->

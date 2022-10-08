@@ -59,3 +59,39 @@ export function getRandomNumber(generations, numRNGBits) {
 
   return [randomNumberBinary, randomNumberDecimal]
 }
+
+// Given an asymmetric rule, find its flipped variant and return the number correlating to that rule
+export function getComplementRule(rule) {
+  const DOUBLE_LEFT = 1
+  const DOUBLE_RIGHT = 4
+  const SINGLE_LEFT = 3
+  const SINGLE_RIGHT = 6
+
+  function setCharAt(str,index,chr) {
+    if(index > str.length-1) return str;
+    return str.substring(0,index) + chr + str.substring(index+1);
+  }
+
+  let ruleBinary = Number(rule).toString(2).padStart(8, '0')
+
+  // Determine whether there is an asymmetric portion of the rule
+  const asymmetricDouble = ruleBinary[DOUBLE_LEFT] ^ ruleBinary[DOUBLE_RIGHT]
+  const asymmetricSingle = ruleBinary[SINGLE_LEFT] ^ ruleBinary[SINGLE_RIGHT]
+
+  // If applicable, invert 110 and 011 rules
+  if (asymmetricDouble) {
+    ruleBinary = setCharAt(ruleBinary, DOUBLE_LEFT, Number(!Number(ruleBinary[DOUBLE_LEFT])))
+    ruleBinary = setCharAt(ruleBinary, DOUBLE_RIGHT, Number(!Number(ruleBinary[DOUBLE_RIGHT])))
+  }
+
+  // If applicable, invert 100 and 001 rule
+  if (asymmetricSingle) {
+    ruleBinary = setCharAt(ruleBinary, SINGLE_LEFT, Number(!Number(ruleBinary[SINGLE_LEFT])))
+    ruleBinary = setCharAt(ruleBinary, SINGLE_RIGHT, Number(!Number(ruleBinary[SINGLE_RIGHT])))
+  }
+
+  // Convert binary back to an int and return
+  let complementRule = parseInt(ruleBinary, 2)
+  // Only return complement if there was change
+  return complementRule === rule ? null : complementRule
+}
