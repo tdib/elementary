@@ -5,6 +5,7 @@
   export let ruleBinary
   export let randomNoisePercent
   export let automatonLoading
+  export let borderCellValue
   let currAnimation
   let canvas
   let ctx
@@ -22,7 +23,7 @@
     cancelAnimationFrame(currAnimation)
   }
 
-  export function displayAutomaton(generations, genDelay, borderCellValue) {
+  export function displayAutomaton(generations, genDelay) {
     // Compute and set the canvas height from the number of generations
     const cellSize = canvas.width/generations[0].length
     canvas.height = Math.min(32000, Math.ceil(generations.length * cellSize))
@@ -53,7 +54,7 @@
           // Remove the first generation and generate a new one at the end, then display instantly
           generations = generations.slice(1, generations.length)
           generations.push(getNextRow(generations[generations.length-1], ruleBinary, randomNoisePercent, borderCellValue))
-          displayAutomaton(generations, 0, borderCellValue)
+          displayAutomaton(generations, 0)
         }
       // Execution as normal - either infiniscroll is disabled or the specified number
       // of durations has not yet been reached

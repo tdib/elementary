@@ -93,5 +93,5 @@ export function getComplementRule(rule) {
   // Convert binary back to an int and return
   let complementRule = parseInt(ruleBinary, 2)
   // Only return complement if there was change
-  return complementRule === rule ? null : complementRule
+  return complementRule === Number(rule) ? null : complementRule
 }
