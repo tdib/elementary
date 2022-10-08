@@ -51,6 +51,10 @@
     })
   })
 
+  $: if (infiniscroll && automatonLoading) {
+    complementRule = getComplementRule(rule)
+  }
+
   // Create list of strings indicating configurations of neighbours
   // [111, 110, 101, ...]
   const neighbourConfigs = [...Array(8).keys()].map((num) => num.toString(2).padStart(3, '0')).reverse()
@@ -309,7 +313,10 @@
           disabled={!complementRule} title={complementRule && 'Generate flipped automaton'}
           on:click={() => {
             rule = complementRule
-            generate()
+            // Do not regenerate if infiniscroll is currently on
+            if (!infiniscroll || !automatonLoading) {
+              generate()
+            }
           }}>{complementRule ?? '-'}</button>
       </span>
       
@@ -320,7 +327,10 @@
           disabled={!invert} title={invert && 'Generate inverted automaton'}
           on:click={() => {
             rule = invert
-            generate()
+            // Do not regenerate if infiniscroll is currently on
+            if (!infiniscroll || !automatonLoading) {
+              generate()
+            }
           }}>{invert ?? '-'}</button>
       </span>
     </div>
