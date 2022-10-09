@@ -290,6 +290,7 @@
           <option value='off'>Off</option>
           <option value='on'>On</option>
           <option value='random'>Random</option>
+          <option value='wrap'>Wrap-around</option>
         </select>
       </ConfigInput>
 

@@ -1,14 +1,24 @@
 // Given a one-dimensional grid of cells (a single generation),
 // calculate the next based on the provided rule
 export function getNextRow(currRow, ruleBinary, randomNoisePercent, borderCellValue) {
-  if (borderCellValue === 'random') borderCellValue = Number(Math.random() > 0.5)
-  else if (borderCellValue === 'on') borderCellValue = 1
-  else if (borderCellValue ==='off') borderCellValue = 0
+  let leftBorderCellValue
+  let rightBorderCellValue
 
+  if (borderCellValue === 'wrap') {
+    leftBorderCellValue = currRow[currRow.length-1]
+    rightBorderCellValue = currRow[0]
+  } else {
+    if (borderCellValue === 'random') borderCellValue = Number(Math.random() > 0.5)
+    else if (borderCellValue === 'on') borderCellValue = 1
+    else if (borderCellValue ==='off') borderCellValue = 0
+
+    leftBorderCellValue = borderCellValue
+    rightBorderCellValue = borderCellValue
+  } 
   return currRow.map((cell, idx) => {
     // Find left values of left and right neighbours
-    const leftNeighbour = currRow[idx - 1] ?? borderCellValue
-    const rightNeighbour = currRow[idx + 1] ?? borderCellValue
+    const leftNeighbour = currRow[idx - 1] ?? leftBorderCellValue
+    const rightNeighbour = currRow[idx + 1] ?? rightBorderCellValue
 
     // Convert neighbours to binary bits and decimal
     const neighbourhoodRuleBits = [leftNeighbour, cell, rightNeighbour].join('')
